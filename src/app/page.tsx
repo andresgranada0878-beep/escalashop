@@ -1,69 +1,123 @@
-import Image from "next/image";
 
-export default function Home() {
+"use client";
+
+import React, { useState, Suspense } from "react";
+import { useParams } from "next/navigation";
+import { CheckCircle2, MapPin, Package, ShieldCheck, Edit3 } from "lucide-react";
+
+function TrackingForm() {
+  const params = useParams();
+  const trackingId = (params?.id as string) || "TRK-9081";
+
+  const [confirmed, setConfirmed] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [address, setAddress] = useState("Calle 10 Sur #43A-15 Apto 802 Edificio Mirador");
+  const [reference, setReference] = useState("Portería 24 horas, frente al parque");
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-6">
+      <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="bg-indigo-600 p-2 rounded-xl">
+            <Package className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <span className="font-bold text-white text-sm block">Confirmación de Despacho</span>
+            <span className="text-xs text-slate-400">Guía interna: {trackingId}</span>
+          </div>
+        </div>
+        <span className="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full font-semibold">
+          Contraentrega
+        </span>
+      </div>
+
+      <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3">
+        <div className="flex justify-between text-xs">
+          <span className="text-slate-400">Producto:</span>
+          <span className="text-white font-medium">Pedido Tienda Online (#1084)</span>
+        </div>
+        <div className="flex justify-between text-xs">
+          <span className="text-slate-400">Valor a pagar al recibir:</span>
+          <span className="text-emerald-400 font-bold text-sm">$145.000 COP</span>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5 text-indigo-400" /> Dirección de Entrega
+          </label>
+          {!confirmed && (
+            <button
+              onClick={() => setEditing(!editing)}
+              className="text-xs text-indigo-400 hover:underline flex items-center gap-1"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              <Edit3 className="w-3 h-3" /> {editing ? "Guardar" : "Corregir dirección"}
+            </button>
+          )}
+        </div>
+
+        {editing ? (
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full bg-slate-950 border border-indigo-500 rounded-xl px-3 py-2.5 text-xs text-white"
+              placeholder="Calle / Carrera # Número y Apto"
+            />
+            <input
+              type="text"
+              value={reference}
+              onChange={(e) => setReference(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300"
+              placeholder="Punto de referencia o quién recibe"
+            />
+          </div>
+        ) : (
+          <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5">
+            <p className="text-sm text-white font-medium">{address}</p>
+            <p className="text-xs text-slate-400 mt-1">Ref: {reference}</p>
+          </div>
+        )}
+      </div>
+
+      {confirmed ? (
+        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center space-y-2">
+          <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
+          <h3 className="text-sm font-bold text-white">¡Pedido Confirmado para Despacho!</h3>
+          <p className="text-xs text-slate-300">
+            Tu paquete ya entró a alistamiento prioritario. Te notificaremos por WhatsApp apenas salga a ruta.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      ) : (
+        <button
+          onClick={() => {
+            setEditing(false);
+            setConfirmed(true);
+          }}
+          className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/25 transition flex items-center justify-center gap-2"
+        >
+          <ShieldCheck className="w-5 h-5" /> Sí, confirmo que recibiré el pedido
+        </button>
+      )}
+
+      <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+        <span className="text-emerald-400 font-semibold">1. Recibido</span>
+        <span className={confirmed ? "text-emerald-400 font-semibold" : ""}>2. Confirmado</span>
+        <span>3. En Ruta</span>
+        <span>4. Entregado</span>
+      </div>
     </div>
+  );
+}
+
+export default function PublicTrackingPage() {
+  return (
+    <main className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans">
+      <Suspense fallback={<div className="text-xs text-slate-400">Cargando guía de despacho...</div>}>
+        <TrackingForm />
+      </Suspense>
+    </main>
   );
 }
