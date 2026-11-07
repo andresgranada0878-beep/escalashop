@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
-const STORE_EMAIL = "admin@tienda.com";
 const GIFT_CREDITS = 3;
 const AI_DELAY_MS = 2500;
 
@@ -22,11 +21,11 @@ type StoreRow = {
   photo_credits: number;
 };
 
-async function getOrCreateStore(): Promise<StoreRow> {
+async function getOrCreateStore(storeEmail: string): Promise<StoreRow> {
   const { data: existing, error: selectError } = await supabase
     .from("stores")
     .select("id, email, photo_credits")
-    .eq("email", STORE_EMAIL)
+    .eq("email", storeEmail)
     .maybeSingle();
 
   if (selectError) {
@@ -39,7 +38,12 @@ async function getOrCreateStore(): Promise<StoreRow> {
 
   const { data: created, error: insertError } = await supabase
     .from("stores")
-    .insert({ email: STORE_EMAIL, photo_credits: GIFT_CREDITS })
+    .insert({
+      email: storeEmail,
+      photo_credits: GIFT_CREDITS,
+      plan_type: "free",
+      subscription_active: false,
+    })
     .select("id, email, photo_credits")
     .single();
 
@@ -59,6 +63,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const imageUrl = body.imageUrl as string | undefined;
     const stylePreset = (body.stylePreset as string | undefined) ?? "studio";
+    const storeEmail = (body.storeEmail as string | undefined)?.toLowerCase();
 
     if (!imageUrl) {
       return NextResponse.json(
@@ -67,7 +72,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const store = await getOrCreateStore();
+    if (!storeEmail) {
+      return NextResponse.json(
+        { error: "storeEmail es requerido" },
+        { status: 400 },
+      );
+    }
+
+    const store = await getOrCreateStore(storeEmail);
 
     if (store.photo_credits <= 0) {
       return NextResponse.json(
