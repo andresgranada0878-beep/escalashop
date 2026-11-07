@@ -84,20 +84,20 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-6 font-sans">
+    <main className="min-h-screen bg-[#FAF9F6] text-[#2C2A29] flex items-center justify-center p-6 font-sans">
       <div className="w-full max-w-md">
         <div className="text-center mb-8 space-y-2">
-          <div className="inline-flex items-center justify-center bg-indigo-600 p-3 rounded-2xl mb-2">
+          <div className="inline-flex items-center justify-center bg-[#8C6D53] p-3 rounded-2xl mb-2 shadow-[0_10px_24px_-14px_rgba(140,109,83,0.7)]">
             <Sparkles className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">EscalaShop</h1>
-          <p className="text-sm text-slate-400">
+          <h1 className="text-2xl font-semibold text-[#2C2A29]">EscalaShop</h1>
+          <p className="text-sm text-[#8A857E]">
             Accede a tu panel de fotos IA y escudo logístico
           </p>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-6">
-          <div className="grid grid-cols-2 gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800">
+        <div className="bg-white border border-[#E6E2DC] rounded-3xl p-6 shadow-[0_16px_40px_-28px_rgba(44,42,41,0.35)] space-y-6">
+          <div className="grid grid-cols-2 gap-2 p-1 bg-[#F5F3EF] rounded-xl border border-[#E6E2DC]">
             <button
               type="button"
               onClick={() => {
@@ -107,8 +107,8 @@ export default function LoginPage() {
               }}
               className={`text-xs font-semibold py-2.5 rounded-lg transition ${
                 mode === "login"
-                  ? "bg-indigo-600 text-white"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "bg-[#8C6D53] text-white shadow-sm"
+                  : "text-[#8A857E] hover:text-[#2C2A29]"
               }`}
             >
               Iniciar sesión
@@ -122,8 +122,8 @@ export default function LoginPage() {
               }}
               className={`text-xs font-semibold py-2.5 rounded-lg transition ${
                 mode === "register"
-                  ? "bg-indigo-600 text-white"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "bg-[#8C6D53] text-white shadow-sm"
+                  : "text-[#8A857E] hover:text-[#2C2A29]"
               }`}
             >
               Crear cuenta
@@ -132,15 +132,15 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-400">Email</label>
+              <label className="text-xs font-medium text-[#8A857E]">Email</label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Mail className="w-4 h-4 text-[#A39E96] absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl pl-10 pr-3 py-2.5 text-sm text-white outline-none transition"
+                  className="w-full bg-[#FAF9F6] border border-[#E6E2DC] focus:border-[#8C6D53] rounded-xl pl-10 pr-3 py-2.5 text-sm text-[#2C2A29] outline-none transition"
                   placeholder="tu@tienda.com"
                   autoComplete="email"
                 />
@@ -148,18 +148,18 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-400">
+              <label className="text-xs font-medium text-[#8A857E]">
                 Contraseña
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Lock className="w-4 h-4 text-[#A39E96] absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="password"
                   required
                   minLength={6}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl pl-10 pr-3 py-2.5 text-sm text-white outline-none transition"
+                  className="w-full bg-[#FAF9F6] border border-[#E6E2DC] focus:border-[#8C6D53] rounded-xl pl-10 pr-3 py-2.5 text-sm text-[#2C2A29] outline-none transition"
                   placeholder="Mínimo 6 caracteres"
                   autoComplete={
                     mode === "login" ? "current-password" : "new-password"
@@ -169,13 +169,13 @@ export default function LoginPage() {
             </div>
 
             {error ? (
-              <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+              <p className="text-xs text-[#9B4D3A] bg-[#F8EDE8] border border-[#E8D0C6] rounded-xl px-3 py-2">
                 {error}
               </p>
             ) : null}
 
             {info ? (
-              <p className="text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
+              <p className="text-xs text-[#4F5E45] bg-[#F3F6F0] border border-[#C9D4BE] rounded-xl px-3 py-2">
                 {info}
               </p>
             ) : null}
@@ -183,7 +183,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition"
+              className="w-full py-3 bg-[#8C6D53] hover:bg-[#735841] disabled:opacity-50 text-white font-semibold text-sm rounded-2xl flex items-center justify-center gap-2 transition shadow-[0_10px_24px_-14px_rgba(140,109,83,0.7)]"
             >
               {loading ? (
                 <>
