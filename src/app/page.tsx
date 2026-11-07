@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import {
   Sparkles,
   ImageIcon,
@@ -12,6 +13,18 @@ import {
   LogOut,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+
+const displayFont = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-escala-display",
+});
+
+const bodyFont = DM_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-escala-body",
+});
 
 const TEMP_PRODUCT_IMAGE =
   "https://images.unsplash.com/photo-1572635196233-2242c0cbc0fe?auto=format&fit=crop&w=800&q=80";
@@ -192,12 +205,11 @@ export default function Home() {
         ? "https://checkout.wompi.co/l/test_pack"
         : "https://checkout.wompi.co/l/test_pro";
 
-    // La pasarela reenviará esta reference al webhook /api/webhooks/payments
     window.location.href = `${paymentLink}?reference=${encodeURIComponent(`${userEmail}___${planId}`)}`;
   };
 
   const tabs: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
-    { id: "studio", label: "Estudio IA", icon: <Camera className="w-4 h-4" /> },
+    { id: "studio", label: "Estudio Fotos IA", icon: <Camera className="w-4 h-4" /> },
     {
       id: "shield",
       label: "Escudo Contraentrega",
@@ -212,7 +224,10 @@ export default function Home() {
 
   if (!authReady || !userEmail) {
     return (
-      <main className="min-h-screen bg-slate-950 flex items-center justify-center text-indigo-400">
+      <main
+        className={`${bodyFont.variable} ${displayFont.variable} min-h-screen bg-[#FAF9F6] flex items-center justify-center text-[#8C6D53]`}
+        style={{ fontFamily: "var(--font-escala-body), sans-serif" }}
+      >
         <p className="text-sm flex items-center gap-2">
           <Loader2 className="w-4 h-4 animate-spin" />
           Verificando sesión...
@@ -222,49 +237,78 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 font-sans">
+    <main
+      className={`${bodyFont.variable} ${displayFont.variable} min-h-screen bg-[#FAF9F6] text-[#2C2A29]`}
+      style={{ fontFamily: "var(--font-escala-body), sans-serif" }}
+    >
       <div className="flex min-h-screen">
-        <aside className="w-56 shrink-0 border-r border-slate-800 bg-slate-900/60 p-4 flex flex-col gap-6">
+        {/* Sidebar */}
+        <aside className="w-60 shrink-0 border-r border-[#E6E2DC] bg-[#F5F3EF] p-5 flex flex-col gap-8">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkles className="w-5 h-5 text-indigo-400" />
-              <span className="font-bold text-white text-sm">EscalaShop</span>
+            <div className="flex items-center gap-2.5 mb-1.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#8C6D53] text-white shadow-sm">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <span
+                className="text-xl font-semibold tracking-tight text-[#2C2A29]"
+                style={{ fontFamily: "var(--font-escala-display), serif" }}
+              >
+                EscalaShop
+              </span>
             </div>
-            <p className="text-[11px] text-slate-500 truncate" title={userEmail}>
+            <p
+              className="text-[11px] text-[#8A857E] truncate pl-0.5"
+              title={userEmail}
+            >
               {userEmail}
             </p>
           </div>
 
           <nav className="flex flex-col gap-1.5 flex-1">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 text-xs font-semibold px-3 py-2.5 rounded-xl border transition text-left ${
-                  activeTab === tab.id
-                    ? "border-indigo-500 bg-indigo-500/20 text-indigo-200"
-                    : "border-transparent text-slate-400 hover:bg-slate-800/80 hover:text-slate-200"
-                }`}
-              >
-                {tab.icon}
-                {tab.label}
-              </button>
-            ))}
+            {tabs.map((tab) => {
+              const active = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2.5 text-[13px] font-medium px-3.5 py-2.5 rounded-2xl border transition text-left ${
+                    active
+                      ? "border-[#E6E2DC] bg-white text-[#2C2A29] shadow-[0_8px_24px_-12px_rgba(44,42,41,0.18)]"
+                      : "border-transparent text-[#8A857E] hover:bg-white/70 hover:text-[#2C2A29]"
+                  }`}
+                >
+                  <span
+                    className={active ? "text-[#8C6D53]" : "text-[#B0A99F]"}
+                  >
+                    {tab.icon}
+                  </span>
+                  {tab.label}
+                </button>
+              );
+            })}
           </nav>
 
-          <div className="space-y-3 pt-2 border-t border-slate-800">
-            <div className="text-xs bg-indigo-500/15 border border-indigo-500/30 text-indigo-200 px-3 py-2 rounded-xl font-semibold">
-              Créditos: {credits}
-              <div className="font-normal text-[10px] text-indigo-300/80 mt-0.5">
-                Plan: {planType}
+          <div className="space-y-3 pt-3 border-t border-[#E6E2DC]">
+            <div className="rounded-2xl border border-[#E6E2DC] bg-white px-3.5 py-3 shadow-[0_6px_20px_-14px_rgba(44,42,41,0.2)]">
+              <p className="text-[10px] uppercase tracking-[0.14em] text-[#A39E96]">
+                Créditos
+              </p>
+              <p
+                className="mt-0.5 text-2xl font-semibold text-[#2C2A29]"
+                style={{ fontFamily: "var(--font-escala-display), serif" }}
+              >
+                {credits}
+              </p>
+              <p className="text-[11px] text-[#8A857E] mt-0.5">
+                Plan {planType}
                 {proActive ? " · PRO" : ""}
-              </div>
+              </p>
             </div>
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 text-xs text-slate-500 hover:text-slate-200 py-2 rounded-lg transition"
+              className="w-full flex items-center justify-center gap-2 text-xs text-[#8A857E] hover:text-[#2C2A29] py-2 rounded-xl transition"
             >
               <LogOut className="w-3.5 h-3.5" />
               Cerrar sesión
@@ -272,34 +316,42 @@ export default function Home() {
           </div>
         </aside>
 
-        <div className="flex-1 p-6 overflow-auto">
+        {/* Content */}
+        <div className="flex-1 p-6 sm:p-8 overflow-auto">
           <div className="max-w-4xl mx-auto space-y-8">
-            <header className="border-b border-slate-800 pb-6">
-              <h1 className="text-2xl font-bold text-white">
+            <header className="border-b border-[#E6E2DC] pb-6">
+              <p className="text-[11px] uppercase tracking-[0.16em] text-[#A39E96] mb-1">
+                Panel EscalaShop
+              </p>
+              <h1
+                className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#2C2A29]"
+                style={{ fontFamily: "var(--font-escala-display), serif" }}
+              >
                 {activeTab === "studio"
-                  ? "Estudio IA"
+                  ? "Estudio Fotos IA"
                   : activeTab === "shield"
                     ? "Escudo Contraentrega"
                     : "Planes y Créditos"}
               </h1>
-              <p className="text-sm text-slate-400 mt-1">
-                Motor de fotos IA y protección logística para tu tienda.
+              <p className="text-sm text-[#8A857E] mt-2 max-w-xl leading-relaxed">
+                Herramienta calmada para crear catálogo visual y proteger tus
+                envíos contraentrega.
               </p>
             </header>
 
             {error ? (
-              <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+              <p className="text-xs text-[#9B4D3A] bg-[#F8EDE8] border border-[#E8D0C6] rounded-2xl px-4 py-3">
                 {error}
               </p>
             ) : null}
 
             {activeTab === "studio" ? (
               <div className="grid md:grid-cols-2 gap-6">
-                <section className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-                  <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">
-                    Imagen original (MVP)
+                <section className="bg-white border border-[#E6E2DC] rounded-2xl p-5 space-y-4 shadow-[0_16px_40px_-28px_rgba(44,42,41,0.35)]">
+                  <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#A39E96]">
+                    Imagen original
                   </h2>
-                  <div className="relative aspect-square rounded-xl overflow-hidden border border-slate-800 bg-slate-950">
+                  <div className="relative aspect-square rounded-2xl overflow-hidden border border-[#E6E2DC] bg-[#F5F3EF]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={TEMP_PRODUCT_IMAGE}
@@ -309,17 +361,17 @@ export default function Home() {
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-xs text-slate-400 font-medium">Estilo</p>
+                    <p className="text-xs font-medium text-[#8A857E]">Estilo</p>
                     <div className="grid grid-cols-2 gap-2">
                       {STYLE_PRESETS.map((preset) => (
                         <button
                           key={preset.id}
                           type="button"
                           onClick={() => setStylePreset(preset.id)}
-                          className={`text-xs py-2 px-3 rounded-lg border transition ${
+                          className={`text-xs py-2.5 px-3 rounded-xl border transition ${
                             stylePreset === preset.id
-                              ? "border-indigo-500 bg-indigo-500/20 text-indigo-200"
-                              : "border-slate-700 text-slate-300 hover:border-slate-600"
+                              ? "border-[#8C6D53] bg-[#F3EBE4] text-[#2C2A29] font-semibold"
+                              : "border-[#E6E2DC] text-[#8A857E] hover:border-[#D4CEC4] hover:bg-[#FAF9F6]"
                           }`}
                         >
                           {preset.label}
@@ -332,7 +384,7 @@ export default function Home() {
                     type="button"
                     onClick={handleGeneratePhoto}
                     disabled={isGenerating || credits <= 0}
-                    className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition"
+                    className="w-full py-3 bg-[#8C6D53] hover:bg-[#735841] disabled:opacity-45 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-2xl flex items-center justify-center gap-2 transition shadow-[0_10px_24px_-14px_rgba(140,109,83,0.7)]"
                   >
                     {isGenerating ? (
                       <>
@@ -348,13 +400,13 @@ export default function Home() {
                   </button>
                 </section>
 
-                <section className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-                  <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">
+                <section className="bg-white border border-[#E6E2DC] rounded-2xl p-5 space-y-4 shadow-[0_16px_40px_-28px_rgba(44,42,41,0.35)]">
+                  <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#A39E96]">
                     Resultado
                   </h2>
-                  <div className="relative aspect-square rounded-xl overflow-hidden border border-slate-800 bg-slate-950 flex items-center justify-center">
+                  <div className="relative aspect-square rounded-2xl overflow-hidden border border-[#E6E2DC] bg-[#F5F3EF] flex items-center justify-center">
                     {isGenerating ? (
-                      <p className="text-sm text-indigo-300 flex items-center gap-2">
+                      <p className="text-sm text-[#8C6D53] flex items-center gap-2">
                         <Loader2 className="w-5 h-5 animate-spin" />
                         Procesando (~2.5s)...
                       </p>
@@ -366,9 +418,9 @@ export default function Home() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <p className="text-xs text-slate-500 px-6 text-center">
-                        Elige un estilo y pulsa generar para ver el resultado de
-                        la API.
+                      <p className="text-xs text-[#A39E96] px-8 text-center leading-relaxed">
+                        Elige un estilo y genera para ver el resultado
+                        profesional.
                       </p>
                     )}
                   </div>
@@ -377,31 +429,40 @@ export default function Home() {
             ) : null}
 
             {activeTab === "shield" ? (
-              <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-                <div className="flex items-center gap-3">
+              <section className="bg-white border border-[#E6E2DC] rounded-2xl p-6 sm:p-8 space-y-5 shadow-[0_16px_40px_-28px_rgba(44,42,41,0.35)]">
+                <div className="flex items-center gap-4">
                   <div
-                    className={`p-3 rounded-xl ${proActive ? "bg-emerald-600" : "bg-slate-800"}`}
+                    className={`p-3.5 rounded-2xl ${
+                      proActive ? "bg-[#6B7F5A]" : "bg-[#F5F3EF]"
+                    }`}
                   >
-                    <ShieldCheck className="w-6 h-6 text-white" />
+                    <ShieldCheck
+                      className={`w-6 h-6 ${proActive ? "text-white" : "text-[#8C6D53]"}`}
+                    />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-white">
-                      EscalaShield PRO
+                    <h2
+                      className="text-2xl font-semibold text-[#2C2A29]"
+                      style={{
+                        fontFamily: "var(--font-escala-display), serif",
+                      }}
+                    >
+                      Escudo Contraentrega
                     </h2>
-                    <p className="text-sm text-slate-400">
+                    <p className="text-sm text-[#8A857E] mt-0.5">
                       Validación de direcciones y confirmación de pedidos
                       contraentrega.
                     </p>
                   </div>
                 </div>
                 {proActive ? (
-                  <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 text-sm text-emerald-200">
+                  <div className="rounded-2xl border border-[#C9D4BE] bg-[#F3F6F0] p-4 text-sm text-[#4F5E45] leading-relaxed">
                     Tu plan PRO está activo. Los pedidos de Shopify se auditan
                     automáticamente y tus clientes confirman despacho desde el
                     enlace de guía.
                   </div>
                 ) : (
-                  <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-sm text-amber-200">
+                  <div className="rounded-2xl border border-[#E8D9C8] bg-[#FBF6F0] p-4 text-sm text-[#7A624C] leading-relaxed">
                     Activa el plan PRO en &quot;Planes y Créditos&quot; para
                     habilitar el escudo logístico completo.
                   </div>
@@ -411,20 +472,31 @@ export default function Home() {
 
             {activeTab === "pricing" ? (
               <section className="grid md:grid-cols-2 gap-6">
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 flex flex-col">
-                  <h2 className="text-lg font-bold text-white">Pack 50 Fotos</h2>
-                  <p className="text-sm text-slate-400 flex-1">
+                <div className="bg-white border border-[#E6E2DC] rounded-2xl p-6 space-y-4 flex flex-col shadow-[0_16px_40px_-28px_rgba(44,42,41,0.35)]">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-[#A39E96]">
+                    Recarga
+                  </p>
+                  <h2
+                    className="text-2xl font-semibold text-[#2C2A29]"
+                    style={{ fontFamily: "var(--font-escala-display), serif" }}
+                  >
+                    Pack 50 Fotos
+                  </h2>
+                  <p className="text-sm text-[#8A857E] flex-1 leading-relaxed">
                     Recarga única de 50 créditos para el estudio de fotos IA.
                     Ideal para catálogos y lanzamientos.
                   </p>
-                  <p className="text-2xl font-bold text-indigo-300">
+                  <p
+                    className="text-3xl font-semibold text-[#8C6D53]"
+                    style={{ fontFamily: "var(--font-escala-display), serif" }}
+                  >
                     $49.000 COP
                   </p>
                   <button
                     type="button"
                     onClick={() => handleCheckout("pack_50")}
                     disabled={checkoutPlanId !== null}
-                    className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-bold text-sm rounded-xl transition"
+                    className="w-full py-3 bg-[#8C6D53] hover:bg-[#735841] disabled:opacity-45 text-white font-semibold text-sm rounded-2xl transition shadow-[0_10px_24px_-14px_rgba(140,109,83,0.7)]"
                   >
                     {checkoutPlanId === "pack_50"
                       ? "Procesando pago seguro..."
@@ -432,22 +504,35 @@ export default function Home() {
                   </button>
                 </div>
 
-                <div className="bg-slate-900 border border-emerald-800/50 rounded-2xl p-6 space-y-4 flex flex-col ring-1 ring-emerald-500/20">
-                  <h2 className="text-lg font-bold text-white">
+                <div className="bg-white border border-[#D6DEC8] rounded-2xl p-6 space-y-4 flex flex-col shadow-[0_16px_40px_-28px_rgba(44,42,41,0.35)] ring-1 ring-[#C9D4BE]/60">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-[#6B7F5A]">
+                    Recomendado
+                  </p>
+                  <h2
+                    className="text-2xl font-semibold text-[#2C2A29]"
+                    style={{ fontFamily: "var(--font-escala-display), serif" }}
+                  >
                     Plan PRO Mensual
                   </h2>
-                  <p className="text-sm text-slate-400 flex-1">
+                  <p className="text-sm text-[#8A857E] flex-1 leading-relaxed">
                     Escudo logístico + 100 créditos de fotos IA cada mes.
                     Confirmación de pedidos y auditoría de direcciones.
                   </p>
-                  <p className="text-2xl font-bold text-emerald-400">
-                    $129.000 COP / mes
+                  <p
+                    className="text-3xl font-semibold text-[#6B7F5A]"
+                    style={{ fontFamily: "var(--font-escala-display), serif" }}
+                  >
+                    $129.000 COP
+                    <span className="text-base font-medium text-[#8A857E]">
+                      {" "}
+                      / mes
+                    </span>
                   </p>
                   <button
                     type="button"
                     onClick={() => handleCheckout("pro_monthly")}
                     disabled={checkoutPlanId !== null}
-                    className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-sm rounded-xl transition"
+                    className="w-full py-3 bg-[#6B7F5A] hover:bg-[#556648] disabled:opacity-45 text-white font-semibold text-sm rounded-2xl transition shadow-[0_10px_24px_-14px_rgba(107,127,90,0.55)]"
                   >
                     {checkoutPlanId === "pro_monthly"
                       ? "Procesando pago seguro..."
