@@ -197,10 +197,10 @@ export default function Home() {
   };
 
   const tabs: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
-    { id: "studio", label: "Fotos IA", icon: <Camera className="w-4 h-4" /> },
+    { id: "studio", label: "Estudio IA", icon: <Camera className="w-4 h-4" /> },
     {
       id: "shield",
-      label: "Escudo PRO",
+      label: "Escudo Contraentrega",
       icon: <ShieldCheck className="w-4 h-4" />,
     },
     {
@@ -277,9 +277,9 @@ export default function Home() {
             <header className="border-b border-slate-800 pb-6">
               <h1 className="text-2xl font-bold text-white">
                 {activeTab === "studio"
-                  ? "Fotos IA"
+                  ? "Estudio IA"
                   : activeTab === "shield"
-                    ? "Escudo PRO"
+                    ? "Escudo Contraentrega"
                     : "Planes y Créditos"}
               </h1>
               <p className="text-sm text-slate-400 mt-1">
