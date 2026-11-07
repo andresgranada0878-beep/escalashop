@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 type AddressRisk = "high" | "medium" | "low";
 
-function assessAddressRisk(fullAddress: string): AddressRisk {
+function assessAddressRisk(fullAddress: string): {
+  score: AddressRisk;
+  reason: string;
+} {
   const normalized = fullAddress.toLowerCase();
   const letterCount = (normalized.match(/[a-záéíóúñ]/gi) ?? []).length;
   const hasNumbers = /\d/.test(normalized);
@@ -10,12 +14,22 @@ function assessAddressRisk(fullAddress: string): AddressRisk {
     /\b(apto|apartamento|casa|torre|local|interior)\b/;
 
   if (letterCount < 10 || !hasNumbers) {
-    return "high";
+    const reason =
+      letterCount < 10
+        ? "Dirección muy corta (menos de 10 letras)."
+        : "La dirección no contiene números.";
+    return { score: "high", reason };
   }
   if (!detailPattern.test(normalized)) {
-    return "medium";
+    return {
+      score: "medium",
+      reason: "Sin referencias de apto, casa, torre u otro detalle.",
+    };
   }
-  return "low";
+  return {
+    score: "low",
+    reason: "Dirección con longitud, número y detalle suficientes.",
+  };
 }
 
 export async function POST(request: Request) {
@@ -32,7 +46,13 @@ export async function POST(request: Request) {
     const city = shipping?.city as string | undefined;
     const totalPrice = body.total_price as string | number | undefined;
 
-    const addressRisk = assessAddressRisk(fullAddress);
+    const { score: addressRisk, reason: riskReason } =
+      assessAddressRisk(fullAddress);
+
+    const codAmountCop =
+      typeof totalPrice === "number"
+        ? totalPrice
+        : parseFloat(String(totalPrice ?? "0")) || 0;
 
     console.log(`
 🛒 Nuevo pedido recibido
@@ -46,8 +66,31 @@ export async function POST(request: Request) {
 ⚠️  Riesgo:     ${addressRisk}
 `);
 
+    const trackingCode = `TRK-${Math.floor(10000 + Math.random() * 90000)}`;
+
+    const { error } = await supabase.from("orders_tracking").insert({
+      order_number: orderNumber,
+      tracking_code: trackingCode,
+      customer_name: customer,
+      customer_phone: phone,
+      city,
+      raw_address: fullAddress,
+      product_summary: "Pedido Tienda Online",
+      cod_amount_cop: codAmountCop,
+      address_risk_score: addressRisk,
+      risk_reason: riskReason,
+    });
+
+    if (error) {
+      console.error("Error al guardar pedido en Supabase:", error);
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 500 },
+      );
+    }
+
     return NextResponse.json(
-      { success: true, orderNumber, addressRisk },
+      { success: true, orderNumber, addressRisk, tracking_code: trackingCode },
       { status: 200 },
     );
   } catch (error) {
