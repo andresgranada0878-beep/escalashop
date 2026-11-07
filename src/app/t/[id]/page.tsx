@@ -1,17 +1,29 @@
 "use client";
 
-import React, { useState, use } from "react";
-import { CheckCircle2, MapPin, Package, ShieldCheck, Edit3 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { Package, MapPin, Edit3, CheckCircle2, ShieldCheck } from "lucide-react";
 
-export default function PublicTrackingPage({ params }: { params: Promise<{ id?: string }> }) {
-  // Desenvolvemos la promesa de los params con React.use()
-  const resolvedParams = use(params);
-  const trackingId = resolvedParams?.id || "TRK-9081";
+export default function PublicTrackingPage() {
+  // 1. Leemos el ID de la URL de forma segura para Next.js 15
+  const params = useParams();
+  const id = params?.id as string;
+  const trackingId = id || "TRK-Pendiente";
 
+  // 2. Truco anti-errores de renderizado en servidor
+  const [isMounted, setIsMounted] = useState(false);
+
+  // 3. Variables de estado para la interfaz visual
   const [confirmed, setConfirmed] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [address, setAddress] = useState("Calle 10 Sur #43A-15 Apto 802 Edificio Mirador");
-  const [reference, setReference] = useState("Portería 24 horas, frente al parque");
+  const [address, setAddress] = useState("Calle 10 Sur #43A-15 Apto 802");
+  const [reference, setReference] = useState("");
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null; 
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans">
