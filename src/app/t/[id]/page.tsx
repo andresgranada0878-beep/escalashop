@@ -1,19 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useParams } from "next/navigation";
 import { Package, MapPin, Edit3, CheckCircle2, ShieldCheck } from "lucide-react";
 
-export default function PublicTrackingPage() {
-  // 1. Leemos el ID de la URL de forma segura para Next.js 15
+// 1. Separamos el contenido que lee la URL en su propio componente
+function TrackingContent() {
   const params = useParams();
   const id = params?.id as string;
   const trackingId = id || "TRK-Pendiente";
 
-  // 2. Truco anti-errores de renderizado en servidor
   const [isMounted, setIsMounted] = useState(false);
-
-  // 3. Variables de estado para la interfaz visual
   const [confirmed, setConfirmed] = useState(false);
   const [editing, setEditing] = useState(false);
   const [address, setAddress] = useState("Calle 10 Sur #43A-15 Apto 802");
@@ -127,5 +124,14 @@ export default function PublicTrackingPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+// 2. Exportamos la página principal envuelta en Suspense (como lo exige Next.js 15)
+export default function PublicTrackingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-indigo-400">Cargando guía de rastreo...</div>}>
+      <TrackingContent />
+    </Suspense>
   );
 }
